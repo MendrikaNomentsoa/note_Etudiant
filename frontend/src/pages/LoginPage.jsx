@@ -1,13 +1,13 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 
 export default function LoginPage() {
-  const { login }     = useAuth()
-  const { addToast }  = useToast()
-  const navigate      = useNavigate()
-  const [form, setForm]       = useState({ username: '', password: '' })
+  const { login } = useAuth()
+  const { addToast } = useToast()
+  const navigate = useNavigate()
+  const [form, setForm] = useState({ username: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
 
@@ -18,11 +18,10 @@ export default function LoginPage() {
       return
     }
     setLoading(true)
-    await new Promise((r) => setTimeout(r, 600))
-    const result = login(form)
+    const result = await login(form)
     if (result.success) {
       addToast('Connexion réussie ! Bienvenue 👋', 'success')
-      navigate('/dashboard')  // ← Redirection vers dashboard au lieu de students
+      navigate('/dashboard')
     } else {
       addToast(result.message, 'error')
     }
@@ -36,16 +35,16 @@ export default function LoginPage() {
           <div className="icon">🎓</div>
         </div>
         <h1 className="login-title">GestiÉtudiants</h1>
-        <p className="login-subtitle">Connectez-vous pour accéder au tableau de bord</p>
+        <p className="login-subtitle">Connectez-vous à votre compte</p>
 
         <form onSubmit={handleSubmit} noValidate>
           <div className="form-grid" style={{ gap: 14 }}>
             <div className="form-group">
-              <label className="form-label">Identifiant</label>
+              <label className="form-label">Nom d'utilisateur</label>
               <input
                 className="form-input"
                 type="text"
-                placeholder="admin"
+                placeholder="jdupont"
                 value={form.username}
                 onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
                 autoComplete="username"
@@ -71,7 +70,7 @@ export default function LoginPage() {
                   style={{
                     position: 'absolute', right: 11, top: '50%', transform: 'translateY(-50%)',
                     background: 'none', border: 'none', cursor: 'pointer',
-                    fontSize: '0.95rem', color: 'var(--text-4)', lineHeight: 1,
+                    fontSize: '0.95rem', color: 'var(--text-4)'
                   }}
                 >
                   {showPass ? '🙈' : '👁️'}
@@ -79,27 +78,17 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="btn btn-primary btn-full"
-              disabled={loading}
-              style={{ marginTop: 4 }}
-            >
+            <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
               {loading ? <span className="spinner" /> : '🔐'}
-              {loading ? 'Connexion…' : 'Se connecter'}
+              {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </div>
         </form>
 
-        <p className="login-divider">Identifiants de démo</p>
-        <div style={{
-          background: '#f5f3ff', border: '1px solid #ddd6fe',
-          borderRadius: 8, padding: '10px 14px',
-          fontSize: '0.83rem', color: '#4b5563', textAlign: 'center',
-        }}>
-          Login : <strong style={{ color: '#6366f1' }}>admin</strong>
-          {' '}/ Mot de passe : <strong style={{ color: '#6366f1' }}>admin123</strong>
-        </div>
+        <p className="login-divider">Pas encore de compte ?</p>
+        <Link to="/register" className="btn btn-secondary btn-full" style={{ textAlign: 'center', display: 'block' }}>
+          Créer un compte
+        </Link>
       </div>
     </div>
   )

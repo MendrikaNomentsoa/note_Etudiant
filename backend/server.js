@@ -7,6 +7,7 @@ const cors = require('cors');
 
 const connectDB = require('./src/config/db');
 const studentRoutes = require('./src/routes/studentRoutes');
+const userRoutes = require('./src/routes/userRoutes'); 
 const errorHandler = require('./src/middlewares/errorHandler');
 
 // ─── Connexion à MongoDB ──────────────────────────────────────────────────────
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
 
 // ─── Routes API ──────────────────────────────────────────────────────────────
 app.use('/api/students', studentRoutes);
+app.use('/api/users', userRoutes);
 
 // ─── Route 404 ───────────────────────────────────────────────────────────────
 app.use((req, res) => {

@@ -4,13 +4,19 @@ import { ToastProvider } from './context/ToastContext'
 
 import Navbar          from './components/Navbar'
 import LoginPage       from './pages/LoginPage'
+import RegisterPage    from './pages/RegisterPage'
 import DashboardPage   from './pages/DashboardPage'
 import AddStudentPage  from './pages/AddStudentPage'
 import StudentsPage    from './pages/StudentsPage'
 import BilanPage       from './pages/BilanPage'
 
 function ProtectedRoute({ children }) {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  
+  if (loading) {
+    return <div className="loading-spinner">Chargement...</div>
+  }
+  
   return user ? children : <Navigate to="/login" replace />
 }
 
@@ -24,7 +30,11 @@ function AppLayout({ children }) {
 }
 
 function AppRoutes() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return <div className="loading-spinner">Chargement...</div>
+  }
 
   return (
     <Routes>
@@ -34,6 +44,7 @@ function AppRoutes() {
       />
 
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
 
       <Route
         path="/dashboard"
@@ -79,20 +90,7 @@ function AppRoutes() {
         }
       />
 
-      <Route
-        path="*"
-        element={
-          <div style={{
-            minHeight: '100vh', display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: 12,
-          }}>
-            <div style={{ fontSize: '4rem' }}>🔍</div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>Page introuvable</h2>
-            <p style={{ color: 'var(--text-secondary)' }}>La page que vous cherchez n'existe pas.</p>
-            <Navigate to="/" replace />
-          </div>
-        }
-      />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

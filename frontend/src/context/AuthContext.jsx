@@ -1,26 +1,37 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
+import axios from 'axios'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('student_app_user')
-    return saved ? JSON.parse(saved) : null
-  })
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const login = (credentials) => {
-    // Authentification simulée (pas de backend auth)
-    // Remplacer par un vrai appel API + JWT si besoin
-    if (
-      credentials.username === 'admin' &&
-      credentials.password === 'admin123'
-    ) {
-      const userData = { username: 'admin', role: 'Administrateur' }
-      localStorage.setItem('student_app_user', JSON.stringify(userData))
-      setUser(userData)
-      return { success: true }
+  useEffect(() => {
+    // Vérifier si l'utilisateur est stocké dans localStorage
+    const storedUser = localStorage.getItem('student_app_user')
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
     }
-    return { success: false, message: 'Identifiants incorrects' }
+    setLoading(false)
+  }, [])
+
+  const login = async (credentials) => {
+    try {
+      const res = await axios.post('/api/users/login', credentials)
+      if (res.data.success) {
+        const userData = res.data.user
+        localStorage.setItem('student_app_user', JSON.stringify(userData))
+        setUser(userData)
+        return { success: true }
+      }
+      return { success: false, message: res.data.message }
+    } catch (err) {
+      return { 
+        success: false, 
+        message: err.response?.data?.message || 'Erreur de connexion' 
+      }
+    }
   }
 
   const logout = () => {
@@ -29,7 +40,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   )

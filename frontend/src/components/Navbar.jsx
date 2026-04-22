@@ -28,6 +28,20 @@ export default function Navbar() {
     setIsOpen(false)
   }
 
+  // Récupérer l'initiale du nom d'utilisateur
+  const getInitial = () => {
+    if (user?.fullName) return user.fullName.charAt(0).toUpperCase()
+    if (user?.username) return user.username.charAt(0).toUpperCase()
+    return 'A'
+  }
+
+  // Récupérer le nom à afficher
+  const getDisplayName = () => {
+    if (user?.fullName) return user.fullName
+    if (user?.username) return user.username
+    return 'Utilisateur'
+  }
+
   return (
     <>
       <button className="menu-toggle-btn" onClick={toggleMenu} aria-label="Menu">
@@ -64,11 +78,11 @@ export default function Navbar() {
         <div className="sidebar-footer">
           <div className="sidebar-user">
             <div className="user-avatar">
-              {user?.username?.[0]?.toUpperCase() || 'A'}
+              {getInitial()}
             </div>
             <div className="user-info">
-              <span className="user-name">{user?.username || 'admin'}</span>
-              <span className="user-role">Administrateur</span>
+              <span className="user-name">{getDisplayName()}</span>
+              <span className="user-role">{user?.role === 'admin' ? 'Administrateur' : 'Utilisateur'}</span>
             </div>
           </div>
           <button className="sidebar-logout-btn" onClick={handleLogout}>
