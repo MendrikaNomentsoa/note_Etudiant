@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const navItems = [
   { to: '/dashboard', icon: '🏠', label: 'Dashboard' },
@@ -14,6 +14,69 @@ export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [isOpen, setIsOpen] = useState(false)
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    const saved = localStorage.getItem('sidebarWidth')
+    return saved ? parseInt(saved) : 280
+  })
+  const [isResizing, setIsResizing] = useState(false)
+  const sidebarRef = useRef(null)
+
+  // Sauvegarder l'état du menu dans localStorage
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarOpen')
+    if (savedState !== null) {
+      setIsOpen(savedState === 'true')
+    }
+  }, [])
+
+  // Sauvegarder la largeur de la sidebar
+  useEffect(() => {
+    localStorage.setItem('sidebarWidth', sidebarWidth)
+    if (sidebarRef.current) {
+      sidebarRef.current.style.width = `${sidebarWidth}px`
+    }
+    // Mettre à jour le padding-left du contenu
+    document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`)
+  }, [sidebarWidth])
+
+  // Ajouter/supprimer la classe sur le body pour le décalage du contenu
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add('sidebar-open')
+    } else {
+      document.body.classList.remove('sidebar-open')
+    }
+  }, [isOpen])
+
+  // Gestion du redimensionnement
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isResizing) {
+        let newWidth = e.clientX
+        // Limiter la largeur entre 200px et 400px
+        newWidth = Math.min(Math.max(newWidth, 200), 400)
+        setSidebarWidth(newWidth)
+      }
+    }
+
+    const handleMouseUp = () => {
+      setIsResizing(false)
+      document.body.style.cursor = 'default'
+      document.body.style.userSelect = 'auto'
+    }
+
+    if (isResizing) {
+      document.body.style.cursor = 'ew-resize'
+      document.body.style.userSelect = 'none'
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isResizing, setSidebarWidth])
 
   const handleLogout = () => {
     logout()
@@ -22,11 +85,19 @@ export default function Navbar() {
   }
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
+    const newState = !isOpen
+    setIsOpen(newState)
+    localStorage.setItem('sidebarOpen', newState)
   }
 
   const closeMenu = () => {
     setIsOpen(false)
+    localStorage.setItem('sidebarOpen', false)
+  }
+
+  const startResizing = (e) => {
+    e.preventDefault()
+    setIsResizing(true)
   }
 
   // Récupérer l'initiale du nom d'utilisateur
@@ -45,21 +116,22 @@ export default function Navbar() {
 
   return (
     <>
-      <button className="menu-toggle-btn" onClick={toggleMenu} aria-label="Menu">
+      {/* Bouton menu flottant */}
+      <button className={`menu-toggle-btn ${isOpen ? 'menu-open' : ''}`} onClick={toggleMenu} aria-label="Menu">
         <span className="menu-icon">{isOpen ? '✕' : '☰'}</span>
       </button>
 
-      {isOpen && <div className="sidebar-overlay" onClick={closeMenu} />}
-
-      <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
+      {/* Sidebar latérale redimensionnable */}
+      <aside 
+        ref={sidebarRef}
+        className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}
+        style={{ width: sidebarWidth }}
+      >
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <div className="brand-icon">🎓</div>
             <span>GestiÉtudiants</span>
           </div>
-          <button className="sidebar-close" onClick={closeMenu}>
-            ✕
-          </button>
         </div>
 
         <nav className="sidebar-nav">
@@ -92,6 +164,21 @@ export default function Navbar() {
           </button>
         </div>
       </aside>
+
+      {/* Poignée de redimensionnement */}
+      {isOpen && (
+        <div 
+          className="resize-handle"
+          onMouseDown={startResizing}
+          title="Tirer pour redimensionner"
+        >
+          <div className="resize-grip">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+      )}
     </>
   )
 }
