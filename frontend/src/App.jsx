@@ -9,6 +9,8 @@ import DashboardPage   from './pages/DashboardPage'
 import AddStudentPage  from './pages/AddStudentPage'
 import StudentsPage    from './pages/StudentsPage'
 import BilanPage       from './pages/BilanPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -43,9 +45,13 @@ function AppRoutes() {
         element={<Navigate to={user ? '/dashboard' : '/login'} replace />}
       />
 
+      {/* Routes publiques */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
+      {/* Routes protégées (nécessitent authentification) */}
       <Route
         path="/dashboard"
         element={
@@ -90,6 +96,7 @@ function AppRoutes() {
         }
       />
 
+      {/* Route 404 - redirection vers l'accueil */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

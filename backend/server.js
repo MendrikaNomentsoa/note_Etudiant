@@ -7,37 +7,33 @@ const cors = require('cors');
 
 const connectDB = require('./src/config/db');
 const studentRoutes = require('./src/routes/studentRoutes');
-const userRoutes = require('./src/routes/userRoutes'); 
+const userRoutes = require('./src/routes/userRoutes');
 const errorHandler = require('./src/middlewares/errorHandler');
 
-// ─── Connexion à MongoDB ──────────────────────────────────────────────────────
 connectDB();
 
 const app = express();
 
-// ─── Middlewares globaux ──────────────────────────────────────────────────────
-app.use(cors());                        // Autoriser les requêtes cross-origin
-app.use(express.json());                // Parser le corps JSON
-app.use(express.urlencoded({ extended: false })); // Parser les données de formulaire
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// ─── Route de santé ──────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: '🎓 API Gestion des Étudiants — Opérationnelle',
     version: '1.0.0',
     endpoints: {
-      students : '/api/students',
-      bilan    : '/api/students/bilan',
+      students: '/api/students',
+      bilan: '/api/students/bilan',
+      users: '/api/users'
     },
   });
 });
 
-// ─── Routes API ──────────────────────────────────────────────────────────────
 app.use('/api/students', studentRoutes);
 app.use('/api/users', userRoutes);
 
-// ─── Route 404 ───────────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -45,10 +41,8 @@ app.use((req, res) => {
   });
 });
 
-// ─── Middleware de gestion des erreurs (DOIT être le dernier) ────────────────
 app.use(errorHandler);
 
-// ─── Démarrage du serveur ─────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur http://localhost:${PORT}`);

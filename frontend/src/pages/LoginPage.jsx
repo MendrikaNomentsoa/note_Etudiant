@@ -79,9 +79,20 @@ export default function LoginPage() {
             </div>
 
             <button type="submit" className="btn btn-primary btn-full" disabled={loading}>
-              {loading ? <span className="spinner" /> : '🔐'}
-              {loading ? 'Connexion...' : 'Se connecter'}
+                {loading ? <span className="spinner" /> : '🔐'}
+                {loading ? 'Connexion...' : 'Se connecter'}
             </button>
+
+                  <Link to="/forgot-password" style={{ 
+                             display: 'block', 
+                            textAlign: 'center', 
+                            fontSize: '0.8rem', 
+                            color: 'var(--primary)', 
+                            textDecoration: 'none',
+                            marginTop: '12px'
+                          }}>
+                            Mot de passe oublié ?
+                    </Link>
           </div>
         </form>
 
