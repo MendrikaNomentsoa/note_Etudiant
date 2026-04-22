@@ -14,7 +14,7 @@ function ProtectedRoute({ children }) {
   return user ? children : <Navigate to="/login" replace />
 }
 
-// ─── Layout principal (avec Navbar) ─────────────────────────────────────────
+// ─── Layout principal (avec Navbar latérale) ─────────────────────────────────
 function AppLayout({ children }) {
   return (
     <div className="app-layout">

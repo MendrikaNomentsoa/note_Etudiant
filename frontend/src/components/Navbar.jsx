@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useState } from 'react'
 
 const navItems = [
   { to: '/add',      icon: '➕', label: 'Ajout étudiant' },
@@ -10,44 +11,74 @@ const navItems = [
 export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const [isOpen, setIsOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
     navigate('/login')
+    setIsOpen(false)
+  }
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen)
+  }
+
+  const closeMenu = () => {
+    setIsOpen(false)
   }
 
   return (
-    <nav className="navbar">
-      <NavLink to="/" className="navbar-brand">
-        <div className="brand-icon">🎓</div>
-        <span>GestiÉtudiants</span>
-      </NavLink>
+    <>
+      {/* Bouton menu flottant (toujours visible) */}
+      <button className="menu-toggle-btn" onClick={toggleMenu} aria-label="Menu">
+        <span className="menu-icon">{isOpen ? '✕' : '☰'}</span>
+      </button>
 
-      <ul className="navbar-nav">
-        {navItems.map(({ to, icon, label }) => (
-          <li key={to}>
-            <NavLink
-              to={to}
-              className={({ isActive }) => (isActive ? 'active' : '')}
-            >
-              <span className="nav-icon">{icon}</span>
-              <span>{label}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
+      {/* Overlay (fond sombre) quand le menu est ouvert */}
+      {isOpen && <div className="sidebar-overlay" onClick={closeMenu} />}
 
-      <div className="navbar-user">
-        <div className="user-badge">
-          <div className="user-avatar">
-            {user?.username?.[0]?.toUpperCase() || 'A'}
+      {/* Sidebar latérale */}
+      <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
+        <div className="sidebar-header">
+          <div className="sidebar-brand">
+            <div className="brand-icon">🎓</div>
+            <span>GestiÉtudiants</span>
           </div>
-          <span className="user-name">{user?.username || 'admin'}</span>
+          <button className="sidebar-close" onClick={closeMenu}>
+            ✕
+          </button>
         </div>
-        <button className="logout-btn" onClick={handleLogout}>
-          Déconnexion
-        </button>
-      </div>
-    </nav>
+
+        <nav className="sidebar-nav">
+          {navItems.map(({ to, icon, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
+              onClick={closeMenu}
+            >
+              <span className="sidebar-link-icon">{icon}</span>
+              <span className="sidebar-link-label">{label}</span>
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <div className="sidebar-user">
+            <div className="user-avatar">
+              {user?.username?.[0]?.toUpperCase() || 'A'}
+            </div>
+            <div className="user-info">
+              <span className="user-name">{user?.username || 'admin'}</span>
+              <span className="user-role">Administrateur</span>
+            </div>
+          </div>
+          <button className="sidebar-logout-btn" onClick={handleLogout}>
+            <span className="logout-icon">🚪</span>
+            <span>Déconnexion</span>
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }
