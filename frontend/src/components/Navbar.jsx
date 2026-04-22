@@ -3,9 +3,10 @@ import { useAuth } from '../context/AuthContext'
 import { useState } from 'react'
 
 const navItems = [
-  { to: '/add',      icon: '➕', label: 'Ajout étudiant' },
-  { to: '/students', icon: '📋', label: 'Liste & CRUD'   },
-  { to: '/bilan',    icon: '📊', label: 'Bilan classe'   },
+  { to: '/dashboard', icon: '🏠', label: 'Dashboard' },
+  { to: '/add',       icon: '➕', label: 'Ajout étudiant' },
+  { to: '/students',  icon: '📋', label: 'Liste & CRUD'   },
+  { to: '/bilan',     icon: '📊', label: 'Bilan classe'   },
 ]
 
 export default function Navbar() {
@@ -29,15 +30,12 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Bouton menu flottant (toujours visible) */}
       <button className="menu-toggle-btn" onClick={toggleMenu} aria-label="Menu">
         <span className="menu-icon">{isOpen ? '✕' : '☰'}</span>
       </button>
 
-      {/* Overlay (fond sombre) quand le menu est ouvert */}
       {isOpen && <div className="sidebar-overlay" onClick={closeMenu} />}
 
-      {/* Sidebar latérale */}
       <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-brand">

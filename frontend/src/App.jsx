@@ -4,17 +4,16 @@ import { ToastProvider } from './context/ToastContext'
 
 import Navbar          from './components/Navbar'
 import LoginPage       from './pages/LoginPage'
+import DashboardPage   from './pages/DashboardPage'
 import AddStudentPage  from './pages/AddStudentPage'
 import StudentsPage    from './pages/StudentsPage'
 import BilanPage       from './pages/BilanPage'
 
-// ─── Route protégée : redirige vers /login si non authentifié ────────────────
 function ProtectedRoute({ children }) {
   const { user } = useAuth()
   return user ? children : <Navigate to="/login" replace />
 }
 
-// ─── Layout principal (avec Navbar latérale) ─────────────────────────────────
 function AppLayout({ children }) {
   return (
     <div className="app-layout">
@@ -29,16 +28,24 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Redirect root */}
       <Route
         path="/"
-        element={<Navigate to={user ? '/students' : '/login'} replace />}
+        element={<Navigate to={user ? '/dashboard' : '/login'} replace />}
       />
 
-      {/* Authentification */}
       <Route path="/login" element={<LoginPage />} />
 
-      {/* Routes protégées */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <DashboardPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/add"
         element={
@@ -49,6 +56,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/students"
         element={
@@ -59,6 +67,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      
       <Route
         path="/bilan"
         element={
@@ -70,7 +79,6 @@ function AppRoutes() {
         }
       />
 
-      {/* 404 */}
       <Route
         path="*"
         element={

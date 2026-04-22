@@ -22,7 +22,7 @@ export default function LoginPage() {
     const result = login(form)
     if (result.success) {
       addToast('Connexion réussie ! Bienvenue 👋', 'success')
-      navigate('/students')
+      navigate('/dashboard')  // ← Redirection vers dashboard au lieu de students
     } else {
       addToast(result.message, 'error')
     }
