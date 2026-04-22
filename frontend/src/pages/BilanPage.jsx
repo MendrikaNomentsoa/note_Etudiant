@@ -36,7 +36,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 export default function BilanPage() {
   const { addToast } = useToast()
-  const [bilan, setBilan]     = useState(null)
+  const [bilan, setBilan] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function BilanPage() {
   }
 
   const pieData = [
-    { name: 'Admis',       value: bilan.nbAdmis },
+    { name: 'Admis', value: bilan.nbAdmis },
     { name: 'Redoublants', value: bilan.nbRedoublants },
   ]
 
@@ -113,10 +113,10 @@ export default function BilanPage() {
       {/* Stat Cards */}
       <div className="stat-grid">
         <StatCard icon="📐" value={bilan.moyenneClasse} label="Moyenne classe" color="purple" />
-        <StatCard icon="⬇️" value={bilan.moyenneMin}   label="Moyenne min"   color="red"    />
-        <StatCard icon="⬆️" value={bilan.moyenneMax}   label="Moyenne max"   color="blue"   />
-        <StatCard icon="✅" value={bilan.nbAdmis}      label="Admis (≥ 10)"  color="green"  />
-        <StatCard icon="⚠️" value={bilan.nbRedoublants} label="Redoublants"  color="red"    />
+        <StatCard icon="⬇️" value={bilan.moyenneMin} label="Moyenne min" color="red" />
+        <StatCard icon="⬆️" value={bilan.moyenneMax} label="Moyenne max" color="blue" />
+        <StatCard icon="✅" value={bilan.nbAdmis} label="Admis (≥ 10)" color="green" />
+        <StatCard icon="⚠️" value={bilan.nbRedoublants} label="Redoublants" color="red" />
       </div>
 
       {/* Taux de réussite */}

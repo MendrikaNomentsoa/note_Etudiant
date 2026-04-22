@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { ToastProvider } from './context/ToastContext'
+import { ThemeProvider, useTheme } from './context/ThemeContext'
 
 import Navbar          from './components/Navbar'
 import LoginPage       from './pages/LoginPage'
@@ -11,6 +12,17 @@ import StudentsPage    from './pages/StudentsPage'
 import BilanPage       from './pages/BilanPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import ProfilePage from './pages/ProfilePage'
+
+// Bouton pour basculer entre mode clair et sombre
+function ThemeToggle() {
+  const { darkMode, toggleDarkMode } = useTheme()
+  return (
+    <button className="theme-toggle" onClick={toggleDarkMode}>
+      {darkMode ? '☀️' : '🌙'}
+    </button>
+  )
+}
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -27,6 +39,7 @@ function AppLayout({ children }) {
     <div className="app-layout">
       <Navbar />
       <main className="page-content">{children}</main>
+      <ThemeToggle />
     </div>
   )
 }
@@ -95,6 +108,16 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <ProfilePage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
 
       {/* Route 404 - redirection vers l'accueil */}
       <Route path="*" element={<Navigate to="/" replace />} />
@@ -105,11 +128,13 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <AppRoutes />
-        </ToastProvider>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <AppRoutes />
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   )
 }

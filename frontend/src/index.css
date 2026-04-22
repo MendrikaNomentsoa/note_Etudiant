@@ -1166,3 +1166,91 @@ tbody tr:last-child td { border-bottom: none; }
     margin-left: 52px;
   }
 }
+
+/* ─── Sort Info Bar ───────────────────────────────────────────────────────── */
+.sort-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  background: var(--primary-light);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+}
+
+.sort-info-text {
+  color: var(--text-2);
+}
+
+.btn-reset {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+}
+
+.btn-reset:hover {
+  background: rgba(99, 102, 241, 0.15);
+}
+
+/* Amélioration des en-têtes de tableau pour le tri */
+th {
+  transition: background-color 0.2s;
+}
+
+th:hover {
+  background-color: var(--bg-hover);
+}
+
+/* Ajustement du tooltip */
+th[style*="cursor: pointer"] {
+  cursor: pointer;
+}
+
+/* Mode sombre */
+body.dark-mode {
+  --bg: #0f172a;
+  --bg-card: #1e293b;
+  --bg-hover: #334155;
+  --border: #334155;
+  --text-1: #f1f5f9;
+  --text-2: #cbd5e1;
+  --text-3: #94a3b8;
+  --text-4: #64748b;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+/* Bouton dark mode */
+.theme-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  transition: var(--transition);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.05);
+}
+

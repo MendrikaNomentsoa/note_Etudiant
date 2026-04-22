@@ -93,7 +93,7 @@ const login = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Profil
+// @desc    Obtenir le profil utilisateur
 // @route   GET /api/users/profile
 // ─────────────────────────────────────────────────────────────────────────────
 const getProfile = async (req, res) => {
@@ -118,12 +118,12 @@ const getProfile = async (req, res) => {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// @desc    Mettre à jour le profil
+// @desc    Mettre à jour le profil (nom, email, mot de passe)
 // @route   PUT /api/users/profile
 // ─────────────────────────────────────────────────────────────────────────────
 const updateProfile = async (req, res) => {
   try {
-    const { fullName, email } = req.body;
+    const { fullName, email, currentPassword, newPassword } = req.body;
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -133,14 +133,54 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullName) user.fullName = fullName;
-    if (email) user.email = email;
+    // Mettre à jour le nom complet
+    if (fullName && fullName !== user.fullName) {
+      user.fullName = fullName;
+    }
+
+    // Mettre à jour l'email (vérifier qu'il n'est pas déjà utilisé)
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email, _id: { $ne: req.userId } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: "Cet email est déjà utilisé par un autre compte"
+        });
+      }
+      user.email = email;
+    }
+
+    // Changer le mot de passe si demandé
+    if (currentPassword && newPassword) {
+      const isMatch = await user.comparePassword(currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: "Mot de passe actuel incorrect"
+        });
+      }
+      
+      if (newPassword.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: "Le nouveau mot de passe doit contenir au moins 6 caractères"
+        });
+      }
+      
+      user.password = newPassword;
+    }
 
     await user.save();
 
+    // Déterminer le message de succès
+    let message = "Profil mis à jour avec succès";
+    if (currentPassword && newPassword) {
+      message = "Mot de passe modifié avec succès. Veuillez vous reconnecter.";
+    }
+
     res.status(200).json({
       success: true,
-      message: "Profil mis à jour",
+      message: message,
       user: {
         id: user._id,
         username: user.username,

@@ -9,6 +9,7 @@ const {
   verifyResetToken,
   resetPassword
 } = require('../controllers/userController');
+const { protect } = require('../middlewares/authMiddleware');
 
 // Routes publiques
 router.post('/register', register);
@@ -17,8 +18,8 @@ router.post('/forgot-password', forgotPassword);
 router.get('/verify-reset-token/:token', verifyResetToken);
 router.post('/reset-password/:token', resetPassword);
 
-// Routes protégées
-router.get('/profile', getProfile);
-router.put('/profile', updateProfile);
+// Routes protégées (nécessitent authentification)
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect, updateProfile);
 
 module.exports = router;

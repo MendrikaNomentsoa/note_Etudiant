@@ -3,18 +3,11 @@ import StudentForm from './StudentForm'
 import { deleteStudent } from '../api/students'
 import { useToast } from '../context/ToastContext'
 
-export default function StudentTable({ students, onRefresh }) {
+export default function StudentTable({ students, onRefresh, onSort, sortBy, sortIcon }) {
   const { addToast } = useToast()
-  const [editTarget, setEditTarget]     = useState(null)
+  const [editTarget, setEditTarget] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [deleting, setDeleting]         = useState(false)
-  const [search, setSearch]             = useState('')
-
-  const filtered = students.filter(
-    (s) =>
-      s.nom.toLowerCase().includes(search.toLowerCase()) ||
-      s.numEt.toLowerCase().includes(search.toLowerCase())
-  )
+  const [deleting, setDeleting] = useState(false)
 
   const confirmDelete = async () => {
     if (!deleteTarget) return
@@ -31,88 +24,92 @@ export default function StudentTable({ students, onRefresh }) {
     }
   }
 
-  return (
-    <>
-      {/* Search */}
-      <div className="toolbar">
-        <div className="search-bar-wrap">
-          <span className="search-icon">🔍</span>
-          <input
-            className="search-bar"
-            placeholder="Rechercher par nom ou numéro…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-          {filtered.length} étudiant{filtered.length !== 1 ? 's' : ''}
+  // Fonction pour rendre le header de colonne avec bouton de tri
+  const SortableHeader = ({ column, label, align = 'left' }) => (
+    <th 
+      style={{ textAlign: align, cursor: 'pointer', userSelect: 'none' }}
+      onClick={() => onSort(column)}
+    >
+      <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+        {label}
+        <span style={{ 
+          fontSize: '0.8rem', 
+          opacity: sortBy === column ? 1 : 0.4,
+          transition: 'opacity 0.2s'
+        }}>
+          {sortIcon(column)}
         </span>
       </div>
+    </th>
+  )
 
-      {/* Table */}
-      {filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">🎓</div>
-          <div className="empty-title">Aucun étudiant trouvé</div>
-          <p className="empty-text">
-            {search ? 'Essayez un autre terme de recherche.' : 'Commencez par ajouter un étudiant.'}
-          </p>
-        </div>
-      ) : (
-        <div className="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>N° Étudiant</th>
-                <th>Nom</th>
-                <th style={{ textAlign: 'center' }}>Math</th>
-                <th style={{ textAlign: 'center' }}>Physique</th>
-                <th style={{ textAlign: 'center' }}>Moyenne</th>
-                <th style={{ textAlign: 'center' }}>Statut</th>
-                <th style={{ textAlign: 'center' }}>Actions</th>
+  if (students.length === 0) {
+    return (
+      <div className="empty-state">
+        <div className="empty-icon">🎓</div>
+        <div className="empty-title">Aucun étudiant trouvé</div>
+        <p className="empty-text">
+          Commencez par ajouter un étudiant ou modifiez vos critères de recherche.
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <>
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th style={{ width: 50 }}>#</th>
+              <SortableHeader column="num" label="N° Étudiant" />
+              <SortableHeader column="name" label="Nom" />
+              <SortableHeader column="math" label="Math" align="center" />
+              <SortableHeader column="phys" label="Physique" align="center" />
+              <SortableHeader column="average" label="Moyenne" align="center" />
+              <th style={{ textAlign: 'center' }}>Statut</th>
+              <th style={{ textAlign: 'center', width: 100 }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {students.map((s, idx) => (
+              <tr key={s._id}>
+                <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{idx + 1}</td>
+                <td className="td-num">{s.numEt}</td>
+                <td className="td-name">{s.nom}</td>
+                <td className="td-note">{s.note_math}</td>
+                <td className="td-note">{s.note_phys}</td>
+                <td className={`td-avg ${s.moyenne >= 10 ? 'avg-pass' : 'avg-fail'}`}>
+                  {s.moyenne?.toFixed(2)}
+                </td>
+                <td style={{ textAlign: 'center' }}>
+                  <span className={`badge ${s.moyenne >= 10 ? 'badge-success' : 'badge-danger'}`}>
+                    {s.moyenne >= 10 ? '✓ Admis' : '✗ Redoublant'}
+                  </span>
+                </td>
+                <td>
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={() => setEditTarget(s)}
+                      title="Modifier"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => setDeleteTarget(s)}
+                      title="Supprimer"
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {filtered.map((s, idx) => (
-                <tr key={s._id}>
-                  <td style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{idx + 1}</td>
-                  <td className="td-num">{s.numEt}</td>
-                  <td className="td-name">{s.nom}</td>
-                  <td className="td-note">{s.note_math}</td>
-                  <td className="td-note">{s.note_phys}</td>
-                  <td className={`td-avg ${s.moyenne >= 10 ? 'avg-pass' : 'avg-fail'}`}>
-                    {s.moyenne?.toFixed(2)}
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <span className={`badge ${s.moyenne >= 10 ? 'badge-success' : 'badge-danger'}`}>
-                      {s.moyenne >= 10 ? '✓ Admis' : '✗ Redoublant'}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-                      <button
-                        className="btn btn-success btn-sm"
-                        onClick={() => setEditTarget(s)}
-                        title="Modifier"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        onClick={() => setDeleteTarget(s)}
-                        title="Supprimer"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Modal Modification */}
       {editTarget && (

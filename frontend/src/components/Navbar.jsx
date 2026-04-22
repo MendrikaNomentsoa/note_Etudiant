@@ -7,6 +7,7 @@ const navItems = [
   { to: '/add',       icon: '➕', label: 'Ajout étudiant' },
   { to: '/students',  icon: '📋', label: 'Liste & CRUD'   },
   { to: '/bilan',     icon: '📊', label: 'Bilan classe'   },
+  { to: '/profile',   icon: '👤', label: 'Mon profil'     }, 
 ]
 
 export default function Navbar() {

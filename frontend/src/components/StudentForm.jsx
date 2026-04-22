@@ -8,17 +8,17 @@ export default function StudentForm({ initialData = null, onSuccess, onCancel })
   const isEdit = !!initialData
   const { addToast } = useToast()
 
-  const [form, setForm]     = useState(initialData || defaultForm)
+  const [form, setForm] = useState(initialData || defaultForm)
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(false)
 
-  // ─── Calcul préview de la moyenne ─────────────────────────────────────
+  // Calcul preview de la moyenne
   const previewMoyenne =
     form.note_math !== '' && form.note_phys !== ''
       ? ((parseFloat(form.note_math) + parseFloat(form.note_phys)) / 2).toFixed(2)
       : null
 
-  // ─── Validation locale ─────────────────────────────────────────────────
+  // Validation locale
   const validate = () => {
     const errs = {}
     if (!form.numEt.trim())        errs.numEt    = 'Le numéro étudiant est requis'
