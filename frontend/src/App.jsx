@@ -14,6 +14,12 @@ import BilanPage       from './pages/BilanPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import ProfilePage from './pages/ProfilePage'
+import DocumentationPage from './pages/DocumentationPage'
+import FaqPage from './pages/FaqPage'
+import SupportPage from './pages/SupportPage'
+import PrivacyPage from './pages/legal/PrivacyPage'
+import TermsPage from './pages/legal/TermsPage'
+import CookiesPage from './pages/legal/CookiesPage'
 
 // Bouton pour basculer entre mode clair et sombre
 function ThemeToggle() {
@@ -110,12 +116,81 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/profile"
         element={
           <ProtectedRoute>
             <AppLayout>
               <ProfilePage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Routes Ressources */}
+      <Route
+        path="/docs"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <DocumentationPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/faq"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <FaqPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/support"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <SupportPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Routes légales */}
+      <Route
+        path="/privacy"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <PrivacyPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/terms"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <TermsPage />
+            </AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/cookies"
+        element={
+          <ProtectedRoute>
+            <AppLayout>
+              <CookiesPage />
             </AppLayout>
           </ProtectedRoute>
         }
