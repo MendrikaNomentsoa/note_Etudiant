@@ -4,6 +4,7 @@ import { ToastProvider } from './context/ToastContext'
 import { ThemeProvider, useTheme } from './context/ThemeContext'
 
 import Navbar          from './components/Navbar'
+import Footer          from './components/Footer'
 import LoginPage       from './pages/LoginPage'
 import RegisterPage    from './pages/RegisterPage'
 import DashboardPage   from './pages/DashboardPage'
@@ -39,6 +40,7 @@ function AppLayout({ children }) {
     <div className="app-layout">
       <Navbar />
       <main className="page-content">{children}</main>
+      <Footer />
       <ThemeToggle />
     </div>
   )
