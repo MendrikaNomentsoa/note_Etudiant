@@ -3,6 +3,42 @@ import StudentForm from './StudentForm'
 import { deleteStudent } from '../api/students'
 import { useToast } from '../context/ToastContext'
 
+// Icônes SVG
+const IconEdit = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 3l4 4-7 7H10v-4l7-7z" />
+    <path d="M4 20h16" />
+  </svg>
+)
+
+const IconDelete = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 7h16" />
+    <path d="M10 11v6" />
+    <path d="M14 11v6" />
+    <path d="M5 7l1 14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2l1-14" />
+    <path d="M9 3h6" />
+  </svg>
+)
+
+const IconSortAsc = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 5v14M19 12l-7 7-7-7" />
+  </svg>
+)
+
+const IconSortDesc = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 19V5M5 12l7-7 7 7" />
+  </svg>
+)
+
+const IconSort = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M7 10l5-5 5 5M17 14l-5 5-5-5" />
+  </svg>
+)
+
 export default function StudentTable({ students, onRefresh, onSort, sortBy, sortIcon }) {
   const { addToast } = useToast()
   const [editTarget, setEditTarget] = useState(null)
@@ -24,7 +60,11 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
     }
   }
 
-  // Fonction pour rendre le header de colonne avec bouton de tri
+  const getSortIconComponent = (column) => {
+    if (sortBy !== column) return <IconSort />
+    return sortOrder === 'asc' ? <IconSortAsc /> : <IconSortDesc />
+  }
+
   const SortableHeader = ({ column, label, align = 'left' }) => (
     <th 
       style={{ textAlign: align, cursor: 'pointer', userSelect: 'none' }}
@@ -35,9 +75,11 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
         <span style={{ 
           fontSize: '0.8rem', 
           opacity: sortBy === column ? 1 : 0.4,
-          transition: 'opacity 0.2s'
+          transition: 'opacity 0.2s',
+          display: 'flex',
+          alignItems: 'center'
         }}>
-          {sortIcon(column)}
+          {getSortIconComponent(column)}
         </span>
       </div>
     </th>
@@ -46,7 +88,14 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
   if (students.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">🎓</div>
+        <div className="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
         <div className="empty-title">Aucun étudiant trouvé</div>
         <p className="empty-text">
           Commencez par ajouter un étudiant ou modifiez vos critères de recherche.
@@ -94,14 +143,14 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
                       onClick={() => setEditTarget(s)}
                       title="Modifier"
                     >
-                      ✏️
+                      <IconEdit />
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => setDeleteTarget(s)}
                       title="Supprimer"
                     >
-                      🗑️
+                      <IconDelete />
                     </button>
                   </div>
                 </td>
@@ -111,12 +160,13 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
         </table>
       </div>
 
-      {/* Modal Modification */}
       {editTarget && (
         <div className="modal-overlay" onClick={() => setEditTarget(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">✏️ Modifier — {editTarget.nom}</span>
+              <span className="modal-title">
+                <IconEdit /> Modifier — {editTarget.nom}
+              </span>
               <button className="modal-close" onClick={() => setEditTarget(null)}>✕</button>
             </div>
             <StudentForm
@@ -128,12 +178,13 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
         </div>
       )}
 
-      {/* Modal Confirmation Suppression */}
       {deleteTarget && (
         <div className="modal-overlay" onClick={() => setDeleteTarget(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <span className="modal-title">⚠️ Confirmer la suppression</span>
+              <span className="modal-title">
+                <IconDelete /> Confirmer la suppression
+              </span>
               <button className="modal-close" onClick={() => setDeleteTarget(null)}>✕</button>
             </div>
             <p style={{ color: 'var(--text-secondary)', marginBottom: 8 }}>
@@ -150,7 +201,7 @@ export default function StudentTable({ students, onRefresh, onSort, sortBy, sort
                 Annuler
               </button>
               <button className="btn btn-danger" onClick={confirmDelete} disabled={deleting}>
-                {deleting ? <span className="spinner" /> : '🗑️'}
+                {deleting ? <span className="spinner" /> : <IconDelete />}
                 {deleting ? 'Suppression…' : 'Supprimer'}
               </button>
             </div>

@@ -18,8 +18,9 @@ export default function Footer() {
   const githubLinks = {
     repo: 'https://github.com/MendrikaNomentsoa/note_Etudiant',           // Repository commun
     yourProfile: 'https://github.com/mitiarj05',                          // Votre profil GitHub
-    friendProfile: 'https://github.com/MendrikaNomentsoa',                // Profil de votre ami
-    yourPortfolio: 'https://github.com/mitiarj05',                       // Votre portfolio
+    friendProfile: 'https://github.com/MendrikaNomentsoa',                // Profil de MendrikaNomentsoa
+    michaelProfile: 'https://github.com/michael-eddys',                   // Profil de Michael Eddys
+    yourPortfolio: 'https://github.com/mitiarj05',                        // Votre portfolio
     apiDocs: 'https://github.com/MendrikaNomentsoa/note_Etudiant/wiki',   // Wiki pour la doc API
     guides: 'https://github.com/MendrikaNomentsoa/note_Etudiant/wiki/Guides', // Guides
     issues: 'https://github.com/MendrikaNomentsoa/note_Etudiant/issues'   // Pour les bugs
@@ -93,6 +94,10 @@ export default function Footer() {
               {' & '}
               <a href={githubLinks.friendProfile} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
                 MendrikaNomentsoa
+              </a>
+              {' & '}
+              <a href={githubLinks.michaelProfile} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+                Michael Eddys
               </a>
             </div>
           </div>
@@ -199,11 +204,15 @@ export default function Footer() {
             <p>
               &copy; {currentYear} GestiÉtudiants. Développé avec ❤️ par{' '}
               <a href={githubLinks.yourPortfolio} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
-                Mitiarj05
+                Mitiarij05
               </a>
               {' & '}
               <a href={githubLinks.friendProfile} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
                 MendrikaNomentsoa
+              </a>
+              {' & '}
+              <a href={githubLinks.michaelProfile} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)', textDecoration: 'none', fontWeight: 600 }}>
+                Michael Eddys
               </a>
             </p>
           </div>
@@ -219,7 +228,7 @@ export default function Footer() {
             </a>
           </div>
           <div className="footer-version">
-            <span>Version 2.0.0</span>
+            <span>Version 1.0.0</span>
           </div>
         </div>
       </div>

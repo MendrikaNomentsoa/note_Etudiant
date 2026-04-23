@@ -15,13 +15,11 @@ export default function SupportPage() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validation
     if (!formData.name || !formData.email || !formData.subject || !formData.message) {
       addToast('Veuillez remplir tous les champs', 'error')
       return
     }
 
-    // Validation email simple
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(formData.email)) {
       addToast('Veuillez entrer un email valide', 'error')
@@ -30,7 +28,6 @@ export default function SupportPage() {
 
     setLoading(true)
     
-    // Simuler l'envoi (à remplacer par un vrai appel API)
     setTimeout(() => {
       addToast('Votre message a été envoyé ! Nous vous répondrons rapidement.', 'success')
       setFormData({ name: '', email: '', subject: '', message: '' })
@@ -50,8 +47,7 @@ export default function SupportPage() {
         <p className="page-subtitle">Besoin d'aide ? Contactez notre équipe</p>
       </div>
 
-      <div className="support-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* Formulaire de contact */}
+      <div className="support-grid">
         <div className="card">
           <div className="card-header">
             <div className="card-icon">📝</div>
@@ -122,7 +118,6 @@ export default function SupportPage() {
           </form>
         </div>
 
-        {/* Informations de contact */}
         <div>
           <div className="card" style={{ marginBottom: 20 }}>
             <div className="card-header">
